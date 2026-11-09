@@ -1,0 +1,20 @@
+name: Run Integration Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Run Tests with Maven
+        run: |
+          cd sut-b || cd "group 3/variant09/sut-b"
+          mvn test -Dtest=RentalIsolatedIT
