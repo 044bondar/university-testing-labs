@@ -14,6 +14,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.jupiter.version>5.11.0</junit.jupiter.version>
     <testcontainers.version>1.20.4</testcontainers.version>
+    <jacoco.version>0.8.12</jacoco.version>
+    <pitest.version>1.16.1</pitest.version>
   </properties>
 
   <dependencies>
@@ -86,10 +88,50 @@
           <target>21</target>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.0</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <version>1.16.1</version>
+        <configuration>
+          <targetClasses>
+            <param>ua.course.rental.RentalService</param>
+          </targetClasses>
+          <targetTests>
+            <param>ua.course.rental.RentalServiceTest</param>
+          </targetTests>
+          <outputFormats>
+            <outputFormat>HTML</outputFormat>
+          </outputFormats>
+          <timestampedReports>false</timestampedReports>
+        </configuration>
       </plugin>
     </plugins>
   </build>

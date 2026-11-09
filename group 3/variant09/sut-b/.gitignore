@@ -1,2 +1,4 @@
 target/
 .env
+Add-Content .gitignore "`n.idea/`n*.iml"
+

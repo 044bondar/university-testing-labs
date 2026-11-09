@@ -230,4 +230,57 @@ class RentalServiceTest {
         assertThrows(IllegalArgumentException.class, () -> rentalService.calculateTotal(5000L, 1, 0));
         assertThrows(IllegalArgumentException.class, () -> rentalService.calculateTotal(5000L, 1, 31));
     }
+// =========================================================================
+    // ТЕСТИ ДЛЯ ДОСЯГНЕННЯ 100% BRANCH COVERAGE (Лабораторна робота №3)
+    // =========================================================================
+
+    @Test
+    @DisplayName("Coverage: валідація некоректного reference (null, пустий, довгий)")
+    void rent_InvalidReference_ThrowsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () ->
+                rentalService.rent(new RentalService.RentalRequest(null, 1L, 1, 1, false)));
+        assertThrows(IllegalArgumentException.class, () ->
+                rentalService.rent(new RentalService.RentalRequest("   ", 1L, 1, 1, false)));
+        assertThrows(IllegalArgumentException.class, () ->
+                rentalService.rent(new RentalService.RentalRequest("A".repeat(41), 1L, 1, 1, false)));
+    }
+
+    @Test
+    @DisplayName("Coverage: невалідний equipmentId <= 0")
+    void rent_InvalidEquipmentId_ThrowsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () ->
+                rentalService.rent(new RentalService.RentalRequest("REF-1", 0L, 1, 1, false)));
+        assertThrows(IllegalArgumentException.class, () ->
+                rentalService.rent(new RentalService.RentalRequest("REF-1", -5L, 1, 1, false)));
+    }
+
+    @Test
+    @DisplayName("Coverage: обладнання не знайдено в репозиторії (equipment == null)")
+    void rent_EquipmentNotFound_ThrowsIllegalArgumentException() {
+        when(equipmentRepo.findById(999L)).thenReturn(null);
+        RentalService.RentalRequest request = new RentalService.RentalRequest("REF-NONE", 999L, 1, 1, false);
+
+        assertThrows(IllegalArgumentException.class, () -> rentalService.rent(request));
+    }
+
+    @Test
+    @DisplayName("Coverage: граничні значення ціни dailyRate (<100 або >1 000 000)")
+    void calculateTotal_InvalidDailyRate_ThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> rentalService.calculateTotal(99L, 1, 1));
+        assertThrows(IllegalArgumentException.class, () -> rentalService.calculateTotal(1_000_001L, 1, 1));
+    }
+
+    @Test
+    @DisplayName("Coverage: граничні значення кількості quantity (<1 або >20)")
+    void calculateTotal_InvalidQuantity_ThrowsException() {
+        assertThrows(IllegalArgumentException.class, () -> rentalService.calculateTotal(1000L, 0, 1));
+        assertThrows(IllegalArgumentException.class, () -> rentalService.calculateTotal(1000L, 21, 1));
+    }
+
+    @Test
+    @DisplayName("Coverage: валідація повернення з id <= 0")
+    void returnRental_InvalidId_ThrowsIllegalArgumentException() {
+        assertThrows(IllegalArgumentException.class, () -> rentalService.returnRental(0L));
+        assertThrows(IllegalArgumentException.class, () -> rentalService.returnRental(-10L));
+    }
 }
